@@ -1,5 +1,5 @@
 <template>
-  <main class="flex-col min-h-screen bg-gray-900 flex-center">
+  <main class="flex flex-col items-center min-h-screen pt-40 bg-gray-900">
     <h1 class="text-5xl text-white">Todo List App</h1>
     <input
       type="text"
@@ -9,13 +9,18 @@
       v-model="inputTask"
       id=""
     />
-    <ul>
+    <ul class="flex flex-col gap-2 mt-10">
       <li
-        v-for="(Task, index) in TaskList"
-        :key="Task.task + index"
-        class="text-white"
+        v-for="(Task, index) in tasks"
+        :key="Task.id"
+        class="flex gap-4 px-2 py-4 text-white bg-indigo-600 w-80"
       >
-        {{ Task.task }} - {{ Task.completed }}
+        <input
+          type="checkbox"
+          v-model="Task.is_complete"
+          @click.prevent="completeTask(Task)"
+        />
+        <h3>{{ Task.task }}</h3>
       </li>
     </ul>
   </main>
@@ -23,14 +28,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Tasklist } from "~/types/credentials.types"
+import type { Database } from "~/types/supabase"
 
 definePageMeta({
   middleware: "auth",
 })
-const client = useSupabaseClient()
+const client = useSupabaseClient<Database>()
+const user = useSupabaseUser()
 const inputTask = ref<string>("")
-const TaskList = ref<Tasklist[]>([])
 
 // Logout
 function logout() {
@@ -38,13 +43,37 @@ function logout() {
   navigateTo("/login")
 }
 
-const addToTask = () => {
-  TaskList.value.push({
-    task: inputTask.value,
-    completed: false,
-  })
-  inputTask.value = ""
+const { data: tasks } = await useAsyncData("tasks", async () => {
+  if (user.value) {
+    const { data } = await client
+      .from("todos")
+      .select("id, task, is_complete,inserted_at")
+      .eq("user_id", user.value.id)
+      .order("inserted_at")
+
+    return data
+  }
+})
+
+const addToTask = async () => {
+  if (user.value) {
+    const { data, error } = await client
+      .from("todos")
+      .upsert({
+        task: inputTask.value,
+        user_id: user.value.id,
+        is_complete: false,
+      })
+      .select("id, task, is_complete, inserted_at")
+      .single()
+    if (tasks.value && data) {
+      tasks.value.push(data)
+      inputTask.value = ""
+    }
+  }
 }
+
+const completeTask = async (Task: task) => {}
 </script>
 
 <style scoped></style>

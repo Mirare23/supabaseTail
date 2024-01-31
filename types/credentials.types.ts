@@ -3,8 +3,3 @@ export type Input = {
   password: string
   errorMsg?: string
 }
-
-export type Tasklist = {
-  task: string
-  completed: boolean
-}
