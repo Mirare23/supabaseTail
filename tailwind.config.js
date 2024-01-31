@@ -9,7 +9,11 @@ export default {
     "./error.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'login-image': 'url("/images/img.jpg")',
+      }
+    },
   },
   plugins: [],
 }
