@@ -4,6 +4,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: "auth",
+})
 const client = useSupabaseClient()
 
 function logout() {
