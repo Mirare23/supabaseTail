@@ -2,13 +2,9 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   supabase: {
-    redirectOptions: {
-      login: "/login",
-      callback: "/confirm",
-      cookieRedirect: true,
-    },
+    redirect: false,
     cookieOptions: {
-      maxAge: 60,
+      maxAge: 60 * 60 * 8,
     },
   },
   modules: ["@nuxtjs/supabase"],
