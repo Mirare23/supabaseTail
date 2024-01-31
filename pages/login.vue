@@ -1,40 +1,43 @@
 <template>
-  <main class="min-h-screen bg-gray-800 flex-center">
-    <div class="min-w-[500px] px-12 py-12 bg-white text-black rounded-3xl">
-      <h1 class="text-4xl text-center">Login</h1>
-      <input
-        v-model="credentials.email"
-        type="email"
-        placeholder="Emails"
-        class="w-full px-2 py-2 mt-8 border border-gray-500 rounded-lg placeholder:text-gray-950 ring-0 ring-offset-0"
-      />
-      <span
-        v-for="error in v$.email.$errors"
-        :key="error.$uid"
-        class="text-left text-red-700"
-      >
-        {{ error.$message }}
-      </span>
-      <input
-        v-model="credentials.password"
-        type="password"
-        placeholder="Password"
-        class="w-full px-2 py-2 mt-2 border border-gray-500 rounded-lg placeholder:text-gray-950 ring-0 ring-offset-0"
-      />
-      <span
-        v-for="error in v$.password.$errors"
-        :key="error.$uid"
-        class="text-left text-red-700"
-      >
-        {{ error.$message }}
-      </span>
-      <input
-        @click.prevent="submitForm()"
-        type="submit"
-        value="Submit"
-        class="w-full px-2 py-4 mt-8 text-white bg-green-600 rounded-lg hover:bg-green-700"
-      />
-      <span v-if="credentials.errorMsg"> {{ credentials.errorMsg }}</span>
+  <main class="min-h-screen bg-gray-900 flex-center">
+    <div class="max-w-[500px] px-12 py-12 bg-indigo-950 text-black rounded-3xl">
+      <h1 class="text-4xl text-center text-white">Login</h1>
+      <form @submit.prevent="submitForm()">
+        <input
+          v-model="credentials.email"
+          type="email"
+          placeholder="Emails"
+          class="w-full px-2 py-2 mt-8 border border-gray-500 rounded-lg placeholder:text-gray-950 ring-0 ring-offset-0"
+        />
+        <span
+          v-for="error in v$.email.$errors"
+          :key="error.$uid"
+          class="text-left text-red-700"
+        >
+          {{ error.$message }}
+        </span>
+        <input
+          v-model="credentials.password"
+          type="password"
+          placeholder="Password"
+          class="w-full px-2 py-2 mt-2 border border-gray-500 rounded-lg placeholder:text-gray-950 ring-0 ring-offset-0"
+        />
+        <span
+          v-for="error in v$.password.$errors"
+          :key="error.$uid"
+          class="text-left text-red-700"
+        >
+          {{ error.$message }}
+        </span>
+        <input
+          type="submit"
+          value="Submit"
+          class="w-full px-2 py-4 mt-8 text-white bg-indigo-400 rounded-lg hover:bg-opacity-80"
+        />
+        <span v-if="credentials.errorMsg" class="mt-4 text-center text-white">
+          {{ credentials.errorMsg }}</span
+        >
+      </form>
     </div>
   </main>
 </template>
