@@ -18,9 +18,10 @@
         <input
           type="checkbox"
           v-model="Task.is_complete"
-          @click.prevent="completeTask(Task)"
+          :name="String(Task.id)"
+          @change.prevent="completeTask(Task)"
         />
-        <h3>{{ Task.task }}</h3>
+        <h3 :class="{ underline: Task.is_complete }">{{ Task.task }}</h3>
       </li>
     </ul>
   </main>
@@ -73,7 +74,16 @@ const addToTask = async () => {
   }
 }
 
-const completeTask = async (Task: task) => {}
+const completeTask = async (event: taskInterface) => {
+  await client
+    .from("todos")
+    .update({
+      is_complete: event.is_complete,
+    })
+    .match({
+      id: event.id,
+    })
+}
 </script>
 
 <style scoped></style>
