@@ -15,7 +15,7 @@
         <h1 class="text-2xl font-bold">Todo List</h1>
         <form @submit.prevent="submitForm()" class="flex flex-col gap-2">
           <h2 class="font-serif text-4xl font-semibold text-center">
-            Welcome Back
+            Welcome Back {{ user }}
           </h2>
           <p>Enter your email and password to access your account</p>
           <label for="Email" class="mt-8 font-medium">Email</label>
@@ -42,6 +42,11 @@
             :class="{ 'opacity-40': loading }"
             class="w-full py-2 mt-5 text-white bg-black rounded-md"
           />
+          <span
+            @click.prevent="signInWithGithub()"
+            class="flex items-center justify-center w-full gap-2 py-2 bg-white border border-black cursor-pointer"
+            ><icon name="uil:github" size="28px" />Sign in with github</span
+          >
         </form>
         <p>
           Dont have an account ?
@@ -53,14 +58,21 @@
 </template>
 
 <script setup lang="ts">
-const client = useSupabaseClient()
 import type { Input } from "~/types/credentials.types"
-const loading = ref(false)
 
+const client = useSupabaseClient()
+const user = useSupabaseUser()
+const loading = ref(false)
 const credentials = ref<Input>({
   email: "",
   password: "",
   errorMsg: "",
+})
+
+watchEffect(() => {
+  if (user.value) {
+    navigateTo("/")
+  }
 })
 
 const submitForm = async () => {
@@ -76,6 +88,21 @@ const submitForm = async () => {
   } catch (error: any) {
     credentials.value.errorMsg = error.message
     loading.value = false
+  }
+}
+
+const signInWithGithub = async () => {
+  try {
+    const { data, error } = await client.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: "http://localhost:3000/confirm",
+      },
+    })
+    if (error) throw error
+    console.log("berhasil")
+  } catch (error) {
+    console.log(error)
   }
 }
 </script>

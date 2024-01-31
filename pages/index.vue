@@ -39,9 +39,9 @@ const user = useSupabaseUser()
 const inputTask = ref<string>("")
 
 // Logout
-function logout() {
-  client.auth.signOut()
-  navigateTo("/login")
+const logout = async () => {
+  await client.auth.signOut()
+  return navigateTo("/login")
 }
 
 const { data: tasks } = await useAsyncData("tasks", async () => {
