@@ -11,6 +11,7 @@ const client = useSupabaseClient()
 
 function logout() {
   client.auth.signOut()
+  navigateTo("/login")
 }
 </script>
 
