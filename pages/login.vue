@@ -36,8 +36,10 @@
             {{ credentials.errorMsg }}
           </p>
           <input
+            :disabled="loading"
             type="submit"
             value="Sign In"
+            :class="{ 'opacity-40': loading }"
             class="w-full py-2 mt-5 text-white bg-black rounded-md"
           />
         </form>
@@ -53,6 +55,7 @@
 <script setup lang="ts">
 const client = useSupabaseClient()
 import type { Input } from "~/types/credentials.types"
+const loading = ref(false)
 
 const credentials = ref<Input>({
   email: "",
@@ -62,14 +65,17 @@ const credentials = ref<Input>({
 
 const submitForm = async () => {
   try {
+    loading.value = true
     const { error } = await client.auth.signInWithPassword({
       email: credentials.value.email,
       password: credentials.value.password,
     })
+    loading.value = false
     if (error) throw error
     navigateTo("/")
   } catch (error: any) {
     credentials.value.errorMsg = error.message
+    loading.value = false
   }
 }
 </script>
