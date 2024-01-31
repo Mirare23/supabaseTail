@@ -1,29 +1,62 @@
 <template>
-  <main class="flex flex-col items-center min-h-screen pt-40 bg-gray-900">
-    <h1 class="text-5xl text-white">Todo List App</h1>
-    <input
-      type="text"
-      class="px-2 py-4 mt-4 rounded-lg w-80"
-      placeholder="Add todo Task"
-      @keyup.enter="addToTask"
-      v-model="inputTask"
-      id=""
-    />
-    <ul class="flex flex-col gap-2 mt-10">
-      <li
-        v-for="(Task, index) in tasks"
-        :key="Task.id"
-        class="flex gap-4 px-2 py-4 text-white bg-indigo-600 w-80"
+  <main
+    class="flex relative flex-col items-center min-h-screen pt-40 bg-[#F9FAFC]"
+  >
+    <!-- modal -->
+    <div
+      v-if="modal"
+      class="absolute inset-0 w-full h-full bg-white bg-opacity-50"
+    >
+      <div
+        class="fixed flex flex-col p-10 -translate-x-1/2 bg-white shadow-xl top-56 left-1/2"
       >
-        <input
-          type="checkbox"
-          v-model="Task.is_complete"
-          :name="String(Task.id)"
-          @change.prevent="completeTask(Task)"
+        <icon
+          name="uil:x"
+          size="30px"
+          class="flex self-end cursor-pointer"
+          @click.prevent="modal = !modal"
         />
-        <h3 :class="{ underline: Task.is_complete }">{{ Task.task }}</h3>
-      </li>
-    </ul>
+        <label for="" class="font-semibold">Add New Task</label>
+        <input
+          @keypress.enter="addToTask()"
+          v-model="inputTask"
+          type="text"
+          class="px-2 py-2 mt-4 rounded-md bg-slate-100"
+          placeholder="Input new task here"
+        />
+      </div>
+    </div>
+    <!-- end Modal -->
+    <!-- Start Card Todo List -->
+    <div
+      class="px-5 py-10 overflow-hidden bg-white border shadow-2xl min-w-96 border-zinc-200"
+    >
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl text-black">Todo List</h1>
+        <button
+          @click.prevent="modal = !modal"
+          class="px-4 py-2 text-white rounded-lg bg-neutral-700"
+        >
+          Create a task
+        </button>
+      </div>
+      <!-- List Looped -->
+      <ul class="flex flex-col gap-2 mt-10">
+        <li
+          v-for="(Task, index) in tasks"
+          :key="Task.id"
+          :class="{ 'line-through': Task.is_complete }"
+          class="flex items-center gap-8 px-4 border min-h-16"
+        >
+          <input
+            v-model="Task.is_complete"
+            type="checkbox"
+            @change.prevent="completeTask(Task)"
+          />
+          {{ Task.task }}
+        </li>
+      </ul>
+    </div>
   </main>
   <button @click.prevent="logout()">Logout</button>
 </template>
@@ -37,6 +70,7 @@ definePageMeta({
 const client = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const inputTask = ref<string>("")
+const modal = ref(false)
 
 // Logout
 const logout = async () => {
@@ -70,6 +104,7 @@ const addToTask = async () => {
     if (tasks.value && data) {
       tasks.value.push(data)
       inputTask.value = ""
+      modal.value = false
     }
   }
 }
