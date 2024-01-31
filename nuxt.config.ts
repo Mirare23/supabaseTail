@@ -2,12 +2,11 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   supabase: {
-    redirect: false,
     cookieOptions: {
       maxAge: 60 * 60 * 8,
     },
   },
-  modules: ["@nuxtjs/supabase"],
+  modules: ["@nuxtjs/supabase", "nuxt-icon"],
   css: ["~/assets/css/main.css"],
   postcss: {
     plugins: {
